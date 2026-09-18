@@ -4,6 +4,8 @@
 
 The repository is prepared for a Render Python web service. A public Render URL cannot be created from this workspace because GitHub repository access and Render account credentials are not available here. Do not invent a URL until Render reports a successful deploy.
 
+For a free demo service without a connected database, set `ALLOW_EPHEMERAL_SQLITE=1`. This allows startup with the local SQLite file, but Render's filesystem is ephemeral and records may be lost after restarts or redeploys. Use the Blueprint database or an external MySQL/PostgreSQL database for persistent data.
+
 ## Web service settings
 
 - Service type: Web Service

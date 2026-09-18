@@ -19,7 +19,8 @@ class Config:
     MYSQL_DATABASE = os.environ.get('MYSQL_DATABASE', 'dentiflow')
     MYSQL_USER = os.environ.get('MYSQL_USER', 'root')
     MYSQL_PASSWORD = os.environ.get('MYSQL_PASSWORD', '')
-    if APP_ENV == 'production' and not os.environ.get('DATABASE_URL') and MYSQL_HOST.lower() in {'localhost', '127.0.0.1'}:
+    allow_ephemeral_sqlite = os.environ.get('ALLOW_EPHEMERAL_SQLITE', '0').lower() in {'1', 'true', 'yes'}
+    if APP_ENV == 'production' and not os.environ.get('DATABASE_URL') and MYSQL_HOST.lower() in {'localhost', '127.0.0.1'} and not allow_ephemeral_sqlite:
         raise RuntimeError('MYSQL_HOST must be the private production MySQL hostname.')
 
     db_url = os.environ.get('DATABASE_URL')
@@ -29,7 +30,7 @@ class Config:
         SQLALCHEMY_DATABASE_URI = db_url
     elif os.environ.get('MYSQL_HOST') and os.environ.get('MYSQL_PASSWORD'):
         SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{quote_plus(MYSQL_USER)}:{quote_plus(MYSQL_PASSWORD)}@{MYSQL_HOST}:{MYSQL_PORT}/{quote_plus(MYSQL_DATABASE)}"
-    elif APP_ENV == 'production':
+    elif APP_ENV == 'production' and not allow_ephemeral_sqlite:
         SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{quote_plus(MYSQL_USER)}:{quote_plus(MYSQL_PASSWORD)}@{MYSQL_HOST}:{MYSQL_PORT}/{quote_plus(MYSQL_DATABASE)}"
     else:
         SQLALCHEMY_DATABASE_URI = f"sqlite:///{os.path.join(BASE_DIR, 'dentiflow.db')}"
