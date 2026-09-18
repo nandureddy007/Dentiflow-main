@@ -117,16 +117,18 @@ def create_app(config_class=Config):
     def health_check():
         try:
             db.session.execute(db.text('SELECT 1'))
+            database_uri = app.config.get('SQLALCHEMY_DATABASE_URI', '')
+            database_name = 'sqlite' if database_uri.startswith('sqlite') else 'mysql'
             return jsonify({
                 "status": "ok",
-                "database": "mysql",
+                "database": database_name,
                 "database_connected": True
             })
         except Exception as e:
             app.logger.exception('Database health check failed')
             return jsonify({
                 "status": "error",
-                "database": "mysql",
+                "database": "sqlite" if app.config.get('SQLALCHEMY_DATABASE_URI', '').startswith('sqlite') else 'mysql',
                 "database_connected": False,
                 "error": "Database connection is unavailable."
             }), 500
@@ -184,6 +186,21 @@ def create_app(config_class=Config):
 
 
 app = create_app()
+
+
+def initialize_ephemeral_demo_database():
+    """Create and seed the opt-in SQLite demo database on a fresh host."""
+    if os.environ.get('ALLOW_EPHEMERAL_SQLITE', '').lower() not in {'1', 'true', 'yes'}:
+        return
+
+    with app.app_context():
+        db.create_all()
+        if not User.query.first():
+            from seed import seed_database
+            seed_database()
+
+
+initialize_ephemeral_demo_database()
 
 def get_network_ips():
     """Detect LAN IPv4 addresses on active network adapters (Wi-Fi / Ethernet)."""
