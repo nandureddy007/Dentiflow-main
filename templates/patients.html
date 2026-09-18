@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}Patients - DentiFlow{% endblock %}
+{% block content %}
+<div class="page-head">
+    <div>
+        <span class="eyebrow">CARE DIRECTORY</span>
+        <h1>Patients</h1>
+        <p class="muted">A clear clinical story for every person you care for.</p>
+    </div>
+</div>
+
+<div class="grid grid-4">
+    <div class="card stat">
+        <div class="stat-icon"></div>
+        <strong>1,284</strong>
+        <small>active patients</small>
+    </div>
+    <div class="card stat">
+        <div class="stat-icon teal"></div>
+        <strong>42</strong>
+        <small>new this month</small>
+    </div>
+    <div class="card stat">
+        <div class="stat-icon orange"></div>
+        <strong>18</strong>
+        <small>visits today</small>
+    </div>
+    <div class="card stat">
+        <div class="stat-icon purple"></div>
+        <strong>94%</strong>
+        <small>satisfaction</small>
+    </div>
+</div>
+
+<div class="card" style="margin-top:18px">
+    <div class="section-title">
+        <h2>All patients</h2>
+        <span class="muted">Showing {{ patients|length }} records</span>
+    </div>
+    <div class="table-wrap">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Patient</th>
+                    <th>Patient ID</th>
+                    <th>Last visit</th>
+                    <th>Care focus</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in patients %}
+                <tr data-searchable>
+                    <td>
+                        <a class="patient" href="{{ url_for('patients.detail', patient_id=p.id) }}">
+                            <span class="avatar">{{ p.name[:2].upper() }}</span>
+                            <b>{{ p.name }}</b>
+                        </a>
+                    </td>
+                    <td>{{ p.patient_id }}</td>
+                    <td>{{ p.last_visit.strftime('%d %b, %H:%M') if p.last_visit else 'Today, 09:00' }}</td>
+                    <td>{{ p.primary_doctor.specialty if p.primary_doctor else 'Tooth #16 - General' }}</td>
+                    <td>
+                        {% if p.outstanding_balance > 0 %}
+                        <span class="pill orange">In care</span>
+                        {% else %}
+                        <span class="pill green">Active</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr data-searchable>
+                    <td><a class="patient" href="#"><span class="avatar">AM</span><b>Aravind Menon</b></a></td>
+                    <td>DF-2026-001</td>
+                    <td>Today, 09:00</td>
+                    <td>Tooth #16 - RCT</td>
+                    <td><span class="pill orange">In care</span></td>
+                </tr>
+                <tr data-searchable>
+                    <td class="patient"><span class="avatar">VR</span><b>Vishal Rao</b></td>
+                    <td>DF-2026-002</td>
+                    <td>May 18, 2026</td>
+                    <td>Scaling follow-up</td>
+                    <td><span class="pill green">Active</span></td>
+                </tr>
+                <tr data-searchable>
+                    <td class="patient"><span class="avatar">MI</span><b>Medha Iyer</b></td>
+                    <td>DF-2026-003</td>
+                    <td>May 04, 2026</td>
+                    <td>Pediatric review</td>
+                    <td><span class="pill green">Active</span></td>
+                </tr>
+                <tr data-searchable>
+                    <td class="patient"><span class="avatar">SK</span><b>Sameer Khan</b></td>
+                    <td>DF-2026-004</td>
+                    <td>Apr 27, 2026</td>
+                    <td>Cleaning</td>
+                    <td><span class="pill">Follow-up</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

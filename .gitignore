@@ -1,0 +1,15 @@
+.rocketride/
+.env
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+database.db
+*.db
+static/uploads/*
+!static/uploads/.gitkeep
+firebase-service-account.json
+scratch/
+*.exe
+cloudflared.exe

@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - DentiFlow{% endblock %}
+{% block content %}
+<div class="page-head">
+    <div>
+        <h1>Dashboard</h1>
+        <p class="muted">Clinic overview for {{ current_user.name if current_user.name else 'Dr. Ananya Sharma' }} ({{ current_user.role|title }})</p>
+    </div>
+    <div class="row">
+        <span class="pill green">Clinic Open</span>
+        {% if current_user.role != 'patient' %}
+        <a class="btn btn-primary" href="{{ url_for('appointments.index') }}">+ Schedule Appointment</a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="hero">
+    <div>
+        <h2>Today’s Clinical Operations</h2>
+        <p>Monitor patient arrivals, chair assignments, and today’s active clinical schedule.</p>
+    </div>
+    <div class="quick-links">
+        <a class="btn btn-ghost" href="{{ url_for('patients.index') }}">Patients</a>
+        <a class="btn btn-ghost" href="{{ url_for('clinical.chart') }}">Dental Chart</a>
+        <a class="btn btn-primary" href="{{ url_for('queue.index') }}">Queue Status</a>
+    </div>
+</div>
+
+<div class="grid grid-4" style="margin-top:14px">
+    <div class="card stat">
+        <small>Visits Today</small>
+        <strong id="kpi-visits">18</strong>
+    </div>
+    <div class="card stat">
+        <small>Waiting Now</small>
+        <strong id="kpi-waiting">4</strong>
+    </div>
+    {% if current_user.role == 'admin' %}
+    <div class="card stat">
+        <small>Revenue This Month</small>
+        <strong id="kpi-revenue">₹42.8k</strong>
+    </div>
+    {% else %}
+    <div class="card stat">
+        <small>Active Dental Chairs</small>
+        <strong id="kpi-chairs">4 / 4</strong>
+    </div>
+    {% endif %}
+    <div class="card stat">
+        <small>Plan Acceptance Rate</small>
+        <strong id="kpi-acceptance">86%</strong>
+    </div>
+</div>
+
+<div class="grid grid-2" style="margin-top:14px">
+    <div class="card">
+        <div class="section-title">
+            <h2>Today’s Appointments</h2>
+            <a href="{{ url_for('appointments.index') }}" style="font-size:13px;">View calendar →</a>
+        </div>
+        <div class="timeline" id="dashboard-journey-list">
+            <div class="timeline-item">
+                <span class="timeline-dot"></span>
+                <div style="flex:1;">
+                    <b>09:00 - Aravind Menon</b>
+                    <div class="muted">Root canal review - Chair 01</div>
+                </div>
+                <span class="pill green">In progress</span>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-dot" style="background:var(--amber)"></span>
+                <div style="flex:1;">
+                    <b>10:30 - Vishal Rao</b>
+                    <div class="muted">Scaling follow-up - Chair 02</div>
+                </div>
+                <span class="pill orange">Checked in</span>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-dot" style="background:var(--blue)"></span>
+                <div style="flex:1;">
+                    <b>12:00 - Medha Iyer</b>
+                    <div class="muted">Pediatric consultation</div>
+                </div>
+                <span class="pill">Upcoming</span>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="section-title">
+            <h2>Live Queue</h2>
+            <span class="pill green" id="queue-live-count">4 waiting</span>
+        </div>
+        <div id="dashboard-queue-tokens">
+            <div class="row between" style="padding:10px 0;border-bottom:1px solid var(--border)">
+                <span><b>01</b> - Aravind Menon<br><small class="muted">with Dr. Sharma</small></span>
+                <span class="pill green">Now in Chair</span>
+            </div>
+            <div class="row between" style="padding:10px 0;border-bottom:1px solid var(--border)">
+                <span><b>02</b> - Vishal Rao<br><small class="muted">Estimated 12 min wait</small></span>
+                <span class="pill orange">Next</span>
+            </div>
+            <div class="row between" style="padding:10px 0;border-bottom:1px solid var(--border)">
+                <span><b>03</b> - Medha Iyer<br><small class="muted">Estimated 25 min wait</small></span>
+                <span class="pill">Waiting</span>
+            </div>
+        </div>
+        <a class="btn btn-primary" style="width:100%;margin-top:14px;" href="{{ url_for('queue.index') }}">Manage Live Queue →</a>
+    </div>
+</div>
+
+{% if current_user.role == 'doctor' %}
+<div class="card" style="margin-top:14px;">
+    <div class="section-title">
+        <div>
+            <h2>Assigned Patients for Today</h2>
+            <p class="muted" style="margin:2px 0 0;">Clinical summary for patients on today’s schedule.</p>
+        </div>
+        <span class="pill green">{{ doctor_patients|length }} patient{{ '' if doctor_patients|length == 1 else 's' }}</span>
+    </div>
+
+    {% if doctor_patients %}
+    <div style="display:grid;gap:10px;">
+        {% for item in doctor_patients %}
+        <details style="border:1px solid var(--border);border-radius:var(--radius);padding:12px;background:#ffffff;">
+            <summary style="cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+                <span><b>{{ item.patient.name }}</b> <span class="muted">({{ item.patient.age }} yrs, {{ item.patient.gender }})</span><br><small class="muted">{{ item.appointment.start_time }} • {{ item.appointment.procedure_name }} • {{ item.appointment.status }}</small></span>
+                <span class="btn btn-ghost" style="padding:4px 8px;font-size:12px;">View Details</span>
+            </summary>
+            <div class="grid grid-2" style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);">
+                <div>
+                    <b>Medical Alerts</b>
+                    {% if item.alerts %}<p style="margin:4px 0;color:var(--red);font-weight:500;">⚠ {{ item.alerts|join(', ') }}</p>{% else %}<p class="muted" style="margin:4px 0;">None recorded</p>{% endif %}
+                    <b style="display:block;margin-top:8px;">Recent Assessment</b>
+                    {% if item.latest_note %}<p class="muted" style="margin:4px 0;">{{ item.latest_note.assessment or 'Assessment on file.' }}</p>{% else %}<p class="muted" style="margin:4px 0;">No note entered yet.</p>{% endif %}
+                </div>
+                <div>
+                    <b>Dental Chart Findings</b>
+                    <p class="muted" style="margin:4px 0;">{{ item.abnormal_teeth|length }} tooth record(s) flagged{% if item.max_pocket %}; max pocket {{ item.max_pocket }} mm{% endif %}.</p>
+                    <b style="display:block;margin-top:8px;">Treatment History</b>
+                    <p class="muted" style="margin:4px 0;">{{ item.prescriptions_count }} prescription(s), {{ item.xray_count }} X-ray(s){% if item.active_plan %} • Plan: {{ item.active_plan.title }}{% endif %}</p>
+                </div>
+            </div>
+            <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+                <a class="btn btn-primary" href="{{ url_for('patients.detail', patient_id=item.patient.id) }}">Open Patient Record</a>
+                <a class="btn btn-ghost" href="{{ url_for('clinical.chart') }}?patient_id={{ item.patient.id }}">Open Dental Chart</a>
+            </div>
+        </details>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="muted" style="margin:8px 0;">No appointments assigned to your chair today.</p>
+    {% endif %}
+</div>
+{% endif %}
+
+{% endblock %}

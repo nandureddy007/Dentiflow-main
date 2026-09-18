@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Dashboard - DentiFlow</title>
+    <link rel="icon" href="./favicon.ico" type="image/svg+xml">
+    <link rel="stylesheet" href="./css/style.css">
+
+<script src="./js/mock_api.js"></script>
+</head>
+<body>
+    
+    <div class="site-shell">
+        <aside class="sidebar">
+            <a class="brand" href="./dashboard.html">
+                <span class="brand-mark">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2C7.5 2 4 4.5 4 8c0 3.5 1.5 5.5 3 9.5 1 2.7 2.5 4.5 5 4.5s4-1.8 5-4.5c1.5-4 3-6 3-9.5 0-3.5-3.5-6-8-6z"></path>
+                    </svg>
+                </span>
+                DentiFlow
+            </a>
+            <nav class="nav">
+                
+                <div class="nav-label">Workspace</div>
+                <a href="./dashboard.html" class="active">
+                    <span>Dashboard</span>
+                </a>
+                <a href="./appointments.html" class="">
+                    <span>Appointments</span>
+                </a>
+                <a href="./patients.html" class="">
+                    <span>Patients</span>
+                </a>
+                <a href="./clinical.html" class="">
+                    <span>Clinical notes</span>
+                </a>
+                <a href="./dental-chart.html" class="">
+                    <span>Dental chart</span>
+                </a>
+                <a href="./treatment-plans.html" class="">
+                    <span>Treatment plans</span>
+                </a>
+                
+                <div class="nav-label practice-label">Administration</div>
+                <a href="./billing.html" class="">
+                    <span>Billing &amp; Revenue</span>
+                </a>
+                <a href="./inventory.html" class="">
+                    <span>Inventory</span>
+                </a>
+                <a href="./reports.html" class="">
+                    <span>Reports</span>
+                </a>
+                <a href="./staff.html" class="">
+                    <span>Staff</span>
+                </a>
+                <a href="./branches.html" class="">
+                    <span>Branches</span>
+                </a>
+                <a href="./settings.html" class="">
+                    <span>Settings</span>
+                </a>
+                
+                <a href="./profile.html" class="">
+                    <span>Profile</span>
+                </a>
+                
+            </nav>
+            <div class="sidebar-bottom">
+                <a href="./index.html">
+                    <span>Home / Sign In</span>
+                </a>
+                <a href="./login.html">
+                    <span>Sign out</span>
+                </a>
+            </div>
+        </aside>
+        <main class="main">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="menu-toggle" data-menu aria-label="Open menu">☰</button>
+                    <label class="search">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#9ca3af;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <input data-search placeholder="Search patients, appointments...">
+                    </label>
+                </div>
+                <div class="top-actions">
+                    <span class="pill green">Admin</span>
+                    <a href="./profile.html" class="user-chip">
+                        <span data-user-name>Dr. Rajesh Verma</span>
+                        <span class="avatar" data-avatar>DR</span>
+                    </a>
+                </div>
+            </header>
+            <section class="content">
+                
+<div class="page-head">
+    <div>
+        <h1>Dashboard</h1>
+        <p class="muted">Clinic overview for Dr. Rajesh Verma (Admin)</p>
+    </div>
+    <div class="row">
+        <span class="pill green">Clinic Open</span>
+        <a class="btn btn-primary" href="./appointments.html">+ Schedule Appointment</a>
+    </div>
+</div>
+
+<div class="hero">
+    <div>
+        <h2>Today’s Clinical Operations</h2>
+        <p>Monitor patient arrivals, chair assignments, and today’s active clinical schedule.</p>
+    </div>
+    <div class="quick-links">
+        <a class="btn btn-ghost" href="./patients.html">Patients</a>
+        <a class="btn btn-ghost" href="./dental-chart.html">Dental Chart</a>
+        <a class="btn btn-primary" href="./queue.html">Queue Status</a>
+    </div>
+</div>
+
+<div class="grid grid-4" style="margin-top:14px">
+    <div class="card stat">
+        <small>Visits Today</small>
+        <strong id="kpi-visits">18</strong>
+    </div>
+    <div class="card stat">
+        <small>Waiting Now</small>
+        <strong id="kpi-waiting">4</strong>
+    </div>
+    
+    <div class="card stat">
+        <small>Revenue This Month</small>
+        <strong id="kpi-revenue">₹42.8k</strong>
+    </div>
+    
+    <div class="card stat">
+        <small>Plan Acceptance Rate</small>
+        <strong id="kpi-acceptance">86%</strong>
+    </div>
+</div>
+
+<div class="grid grid-2" style="margin-top:14px">
+    <div class="card">
+        <div class="section-title">
+            <h2>Today’s Appointments</h2>
+            <a href="./appointments.html" style="font-size:13px;">View calendar →</a>
+        </div>
+        <div class="timeline" id="dashboard-journey-list">
+            <div class="timeline-item">
+                <span class="timeline-dot"></span>
+                <div style="flex:1;">
+                    <b>09:00 - Aravind Menon</b>
+                    <div class="muted">Root canal review - Chair 01</div>
+                </div>
+                <span class="pill green">In progress</span>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-dot" style="background:var(--amber)"></span>
+                <div style="flex:1;">
+                    <b>10:30 - Vishal Rao</b>
+                    <div class="muted">Scaling follow-up - Chair 02</div>
+                </div>
+                <span class="pill orange">Checked in</span>
+            </div>
+            <div class="timeline-item">
+                <span class="timeline-dot" style="background:var(--blue)"></span>
+                <div style="flex:1;">
+                    <b>12:00 - Medha Iyer</b>
+                    <div class="muted">Pediatric consultation</div>
+                </div>
+                <span class="pill">Upcoming</span>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="section-title">
+            <h2>Live Queue</h2>
+            <span class="pill green" id="queue-live-count">4 waiting</span>
+        </div>
+        <div id="dashboard-queue-tokens">
+            <div class="row between" style="padding:10px 0;border-bottom:1px solid var(--border)">
+                <span><b>01</b> - Aravind Menon<br><small class="muted">with Dr. Sharma</small></span>
+                <span class="pill green">Now in Chair</span>
+            </div>
+            <div class="row between" style="padding:10px 0;border-bottom:1px solid var(--border)">
+                <span><b>02</b> - Vishal Rao<br><small class="muted">Estimated 12 min wait</small></span>
+                <span class="pill orange">Next</span>
+            </div>
+            <div class="row between" style="padding:10px 0;border-bottom:1px solid var(--border)">
+                <span><b>03</b> - Medha Iyer<br><small class="muted">Estimated 25 min wait</small></span>
+                <span class="pill">Waiting</span>
+            </div>
+        </div>
+        <a class="btn btn-primary" style="width:100%;margin-top:14px;" href="./queue.html">Manage Live Queue →</a>
+    </div>
+</div>
+
+
+
+
+            </section>
+        </main>
+    </div>
+    
+
+    <!-- Firebase Client Integration -->
+    <script>
+        window.FIREBASE_CONFIG = {"apiKey": "", "appId": "", "authDomain": "", "measurementId": "", "messagingSenderId": "", "projectId": "", "storageBucket": ""};
+        
+        window.CURRENT_USER = {
+            id: 1,
+            name: "Dr. Rajesh Verma",
+            email: "admin@gmail.com",
+            role: "admin"
+        };
+        try { localStorage.setItem("dentiflowUser", JSON.stringify(window.CURRENT_USER)); } catch (e) {}
+        
+    </script>
+    <script src="./js/firebase_config.js"></script>
+    <script src="./js/app.js?v=20260912b"></script>
+    
+</body>
+</html>

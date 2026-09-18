@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Care Team & Staff · DentiFlow{% endblock %}
+{% block content %}
+<div class="page-head">
+    <div>
+        <span class="eyebrow">CARE TEAM</span>
+        <h1>Doctors & Practitioners</h1>
+        <p class="muted">Availability, clinical specializations, and caseload overview.</p>
+    </div>
+    <span class="pill green">{{ doctors|length }} available profiles</span>
+</div>
+
+<div class="hero" style="margin-bottom: 22px;">
+    <div>
+        <span class="eyebrow">DENTIFLOW CLINICAL TEAM</span>
+        <h2>Excellence in Dental Care.</h2>
+        <p>A unified view of availability, specialties, and today’s patient load across all active dental chairs.</p>
+    </div>
+    <div class="hero-art"><span>🩺</span></div>
+</div>
+
+<div class="grid grid-3">
+    {% for doctor in doctors %}
+    <div class="card">
+        <div class="section-title">
+            <div class="avatar" style="width: 44px; height: 44px; font-size: 16px;">{{ doctor.name[0] }}</div>
+            <span class="pill green">Available</span>
+        </div>
+        <h3>{{ doctor.name }}</h3>
+        <p class="muted">{{ doctor.specialty }}<br>{{ doctor.experience_years }} yrs experience</p>
+        <div class="row between" style="margin: 14px 0 8px;">
+            <span class="muted" style="font-size: 12px;">★ {{ doctor.rating }} rating</span>
+            <span class="muted" style="font-size: 12px;">{{ doctor.appointments|length }} visits today</span>
+        </div>
+        <a class="btn btn-soft" style="width: 100%; justify-content: center;" href="{{ url_for('staff.doctor_profile', doctor_id=doctor.id) }}">
+            Open profile →
+        </a>
+    </div>
+    {% else %}
+    <div class="card empty" style="grid-column: 1 / -1;">
+        No doctor profiles found.
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

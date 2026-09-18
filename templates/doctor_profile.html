@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}{{ doctor.name }} - DentiFlow{% endblock %}
+{% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+        <div class="alert {{ 'alert-success' if category == 'success' else 'alert-error' }}">{{ message }}</div>
+    {% endfor %}
+{% endwith %}
+<div class="page-head">
+    <div>
+        <span class="eyebrow">DOCTOR PROFILE</span>
+        <h1>{{ doctor.name }}</h1>
+        <p class="muted">{{ doctor.specialty }} · {{ doctor.experience_years }} years clinical experience</p>
+    </div>
+    <div class="row" style="gap:10px;">
+        <a class="btn btn-ghost" href="{{ url_for('staff.index') }}">← Back to staff</a>
+        <a class="btn btn-primary" href="{{ url_for('staff.doctor_profile', doctor_id=doctor.id, edit=1) }}">Edit profile</a>
+    </div>
+</div>
+
+{% if request.args.get('edit') %}
+<div class="card" style="margin-bottom:18px;">
+    <div class="section-title"><h2>Edit doctor details</h2><span class="pill">Admin only</span></div>
+    <form method="POST" class="form-grid">
+        <div class="field"><label>Full name</label><input type="text" name="name" value="{{ doctor.name }}" required></div>
+        <div class="field"><label>Specialty</label><input type="text" name="specialty" value="{{ doctor.specialty }}" required></div>
+        <div class="field"><label>Degree</label><input type="text" name="degree" value="{{ doctor.degree or '' }}"></div>
+        <div class="field"><label>Registration number</label><input type="text" name="registration_no" value="{{ doctor.registration_no or '' }}"></div>
+        <div class="field"><label>Phone</label><input type="tel" name="phone" value="{{ doctor.phone }}" required></div>
+        <div class="field"><label>Email</label><input type="email" name="email" value="{{ doctor.email }}" required></div>
+        <div class="field"><label>Experience (years)</label><input type="number" min="0" name="experience_years" value="{{ doctor.experience_years }}"></div>
+        <div class="field"><label>Consultation fee</label><input type="number" min="0" step="0.01" name="consultation_fee" value="{{ doctor.consultation_fee }}"></div>
+        <div class="field"><label>Assigned chair</label><input type="text" name="assigned_chair" value="{{ doctor.assigned_chair or '' }}"></div>
+        <div class="field full row" style="justify-content:flex-end;gap:10px;margin-top:10px;">
+            <a class="btn btn-ghost" href="{{ url_for('staff.doctor_profile', doctor_id=doctor.id) }}">Cancel</a>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+    </form>
+</div>
+{% endif %}
+
+<div class="card" style="margin-bottom: 18px;">
+    <div class="row" style="align-items: center; gap: 20px;">
+        <div class="avatar" style="width: 80px; height: 80px; font-size: 32px;">{{ doctor.name[0] }}</div>
+        <div>
+            <h2>{{ doctor.name }}</h2>
+            <span class="pill green" style="margin-bottom: 8px;">{{ doctor.specialty }}</span>
+            <p class="muted" style="margin: 6px 0 0 0;">
+                Phone: {{ doctor.phone }} &bull; Email: {{ doctor.email }}
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-3">
+    <div class="card stat">
+        <div class="stat-icon">📅</div>
+        <strong>{{ appointments_today }}</strong>
+        <small>Appointments today</small>
+    </div>
+    <div class="card stat">
+        <div class="stat-icon teal">👥</div>
+        <strong>{{ patients_treated }}</strong>
+        <small>Patients treated</small>
+    </div>
+    <div class="card stat">
+        <div class="stat-icon orange">⭐</div>
+        <strong>{{ doctor.rating }} / 5.0</strong>
+        <small>Patient satisfaction</small>
+    </div>
+</div>
+{% endblock %}

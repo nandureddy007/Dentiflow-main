@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Sign In · DentiFlow Dental Clinic</title>
+    <link rel="icon" href="./favicon.ico" type="image/svg+xml">
+    <link rel="stylesheet" href="./css/style.css">
+
+<script src="./js/mock_api.js"></script>
+</head>
+<body>
+    
+        
+<main class="auth">
+    <section class="auth-art">
+        <div class="landing-logo" style="margin-bottom:20px;">
+            <span class="brand-mark">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2C7.5 2 4 4.5 4 8c0 3.5 1.5 5.5 3 9.5 1 2.7 2.5 4.5 5 4.5s4-1.8 5-4.5c1.5-4 3-6 3-9.5 0-3.5-3.5-6-8-6z"></path>
+                </svg>
+            </span>
+            DentiFlow Clinic
+        </div>
+        <h2>Clinic Management System</h2>
+        <p>Centralized clinic portal for appointments, patient odontograms, treatment plans, inventory, and billing.</p>
+        
+        <div style="margin-top:24px;display:flex;flex-direction:column;gap:8px;max-width:340px;">
+            <a href="./index.html" class="btn btn-primary" style="padding:9px 14px;">
+                <span>Book Appointment Online</span> <span style="margin-left:auto;">→</span>
+            </a>
+            <a href="./patient-portal.html" class="btn btn-ghost" style="padding:8px 14px;">
+                <span>Patient Portal &amp; Queue Status</span> <span style="margin-left:auto;">→</span>
+            </a>
+        </div>
+
+        <div class="row wrap" style="margin-top:28px;gap:6px;">
+            <span class="pill">Role-Based Access</span>
+            <span class="pill green">Clinical Odontogram</span>
+            <span class="pill">Real-Time Queue</span>
+        </div>
+    </section>
+
+    <section class="auth-panel">
+        <div class="auth-card">
+            
+
+            <!-- Auth Mode Toggle Tabs: Sign In / Create Account -->
+            <div class="auth-tabs" role="tablist" style="display:flex;background:var(--bg-subtle);border:1px solid var(--border);border-radius:var(--radius);padding:2px;margin-bottom:16px;gap:2px;">
+                <button type="button" id="tab-btn-signin" class="auth-tab-btn active" role="tab" style="flex:1;border:none;background:#fff;padding:6px 10px;border-radius:4px;font-weight:600;font-size:13px;color:var(--text-main);cursor:pointer;box-shadow:var(--shadow);">Sign In</button>
+                <button type="button" id="tab-btn-signup" class="auth-tab-btn" role="tab" style="flex:1;border:none;background:transparent;padding:6px 10px;border-radius:4px;font-weight:500;font-size:13px;color:var(--text-muted);cursor:pointer;">Create Account</button>
+            </div>
+
+            
+                
+            
+
+            <!-- ================= 1. SIGN IN VIEW ================= -->
+            <div id="signin-section">
+                <h1>Sign in to DentiFlow</h1>
+                <p class="muted" style="margin-bottom:14px;">Select your role and enter your account credentials.</p>
+
+                <form method="POST" action="/login" id="signin-form">
+                    <div class="role-choice">
+                        <label>
+                            <input type="radio" name="role" value="doctor" checked>
+                            <span>Doctor</span>
+                        </label>
+                        <label>
+                            <input type="radio" name="role" value="patient" >
+                            <span>Patient</span>
+                        </label>
+                        <label>
+                            <input type="radio" name="role" value="admin" >
+                            <span>Admin</span>
+                        </label>
+                    </div>
+
+                    <div class="field">
+                        <label>Email address</label>
+                        <input type="email" name="email" id="signin-email" placeholder="doctor@gmail.com" value="" required autofocus>
+                    </div>
+                    <div class="field" style="margin-top:10px">
+                        <label>Password</label>
+                        <input type="password" name="password" id="signin-password" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="signin-submit-btn" style="width:100%;margin-top:16px;padding:8px;">
+                        Sign In →
+                    </button>
+                </form>
+
+                <!-- One-click Demo Preset Fillers -->
+                <div style="margin-top:16px;border-top:1px solid var(--border);padding-top:12px;">
+                    <p class="muted" style="text-align:center;font-size:12px;margin:0 0 6px;">Demo quick-fill credentials:</p>
+                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;">
+                        <button type="button" class="btn btn-ghost" data-fill="doctor" style="padding:4px;font-size:12px;">Doctor</button>
+                        <button type="button" class="btn btn-ghost" data-fill="patient" style="padding:4px;font-size:12px;">Patient</button>
+                        <button type="button" class="btn btn-ghost" data-fill="admin" style="padding:4px;font-size:12px;">Admin</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= 2. CREATE ACCOUNT VIEW ================= -->
+            <div id="signup-section" style="display:none;">
+                <h1>Create your Account</h1>
+                <p class="muted" style="margin-bottom:14px;">Register a new patient or doctor account.</p>
+
+                <form method="POST" action="/register" id="signup-form">
+                    <div class="field">
+                        <label>Account type</label>
+                        <select name="role" id="signup-role">
+                            <option value="patient" selected>Patient (Appointments &amp; Records)</option>
+                            <option value="doctor">Doctor (Clinical Charting)</option>
+                        </select>
+                    </div>
+                    <div class="field" style="margin-top:10px">
+                        <label>Full name</label>
+                        <input type="text" name="name" id="signup-name" placeholder="Ashwini Goud" required>
+                    </div>
+                    <div class="field" style="margin-top:10px">
+                        <label>Email address</label>
+                        <input type="email" name="email" id="signup-email" placeholder="patient@gmail.com" required>
+                    </div>
+                    <div class="field" style="margin-top:10px">
+                        <label>Phone number</label>
+                        <input type="tel" name="phone" id="signup-phone" placeholder="+91 98765 43210">
+                    </div>
+                    <div class="field" style="margin-top:10px">
+                        <label>Password (minimum 6 characters)</label>
+                        <input type="password" name="password" id="signup-password" minlength="6" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%;margin-top:16px;padding:8px;">
+                        Create Account →
+                    </button>
+                </form>
+            </div>
+
+            <div style="margin-top:16px;padding-top:10px;border-top:1px solid var(--border);text-align:center;">
+                <p style="font-size:12.5px;margin:0;">
+                    Looking to book a visit? <a href="./index.html" style="font-weight:600;">Online Booking →</a>
+                </p>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const tabSignIn = document.getElementById('tab-btn-signin');
+    const tabSignUp = document.getElementById('tab-btn-signup');
+    const sectionSignIn = document.getElementById('signin-section');
+    const sectionSignUp = document.getElementById('signup-section');
+
+    function setTab(mode) {
+        const tabs = [
+            { btn: tabSignIn, sec: sectionSignIn, name: 'signin' },
+            { btn: tabSignUp, sec: sectionSignUp, name: 'signup' }
+        ];
+
+        tabs.forEach(t => {
+            if (t.name === mode) {
+                t.btn.classList.add('active');
+                t.btn.style.background = '#fff';
+                t.btn.style.color = 'var(--text-main)';
+                t.btn.style.boxShadow = 'var(--shadow)';
+                t.sec.style.display = 'block';
+            } else {
+                t.btn.classList.remove('active');
+                t.btn.style.background = 'transparent';
+                t.btn.style.color = 'var(--text-muted)';
+                t.btn.style.boxShadow = 'none';
+                t.sec.style.display = 'none';
+            }
+        });
+    }
+
+    if (tabSignIn) tabSignIn.addEventListener('click', () => setTab('signin'));
+    if (tabSignUp) tabSignUp.addEventListener('click', () => setTab('signup'));
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('mode') === 'signup') {
+        setTab('signup');
+    }
+
+    const credentials = {
+        doctor: { email: 'doctor@gmail.com', pass: 'doctor123', role: 'doctor' },
+        patient: { email: 'patient@gmail.com', pass: 'patient123', role: 'patient' },
+        admin: { email: 'admin@gmail.com', pass: 'admin123', role: 'admin' }
+    };
+
+    document.querySelectorAll('[data-fill]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const roleKey = btn.dataset.fill;
+            const cred = credentials[roleKey];
+            if (cred) {
+                setTab('signin');
+                const emailInp = document.getElementById('signin-email');
+                const passInp = document.getElementById('signin-password');
+                const radio = document.querySelector(`input[name="role"][value="${cred.role}"]`);
+                if (emailInp) emailInp.value = cred.email;
+                if (passInp) passInp.value = cred.pass;
+                if (radio) radio.checked = true;
+                
+                const submitBtn = document.getElementById('signin-submit-btn');
+                if (submitBtn) {
+                    submitBtn.focus();
+                }
+            }
+        });
+    });
+
+    const urlRole = params.get('role');
+    if (urlRole && credentials[urlRole]) {
+        const cred = credentials[urlRole];
+        const emailInp = document.getElementById('signin-email');
+        const passInp = document.getElementById('signin-password');
+        const radio = document.querySelector(`input[name="role"][value="${cred.role}"]`);
+        if (emailInp) emailInp.value = cred.email;
+        if (passInp) passInp.value = cred.pass;
+        if (radio) radio.checked = true;
+    }
+});
+</script>
+
+    
+
+    <!-- Firebase Client Integration -->
+    <script>
+        window.FIREBASE_CONFIG = {"apiKey": "", "appId": "", "authDomain": "", "measurementId": "", "messagingSenderId": "", "projectId": "", "storageBucket": ""};
+        
+        window.CURRENT_USER = null;
+        
+    </script>
+    <script src="./js/firebase_config.js"></script>
+    <script src="./js/app.js?v=20260912b"></script>
+    
+</body>
+</html>

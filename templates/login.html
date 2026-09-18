@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+{% block title %}Sign In · DentiFlow Dental Clinic{% endblock %}
+{% block public_content %}
+<main class="auth">
+    <section class="auth-art">
+        <div class="landing-logo" style="margin-bottom:20px;">
+            <span class="brand-mark">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2C7.5 2 4 4.5 4 8c0 3.5 1.5 5.5 3 9.5 1 2.7 2.5 4.5 5 4.5s4-1.8 5-4.5c1.5-4 3-6 3-9.5 0-3.5-3.5-6-8-6z"></path>
+                </svg>
+            </span>
+            DentiFlow Clinic
+        </div>
+        <h2>Clinic Management System</h2>
+        <p>Centralized clinic portal for appointments, patient odontograms, treatment plans, inventory, and billing.</p>
+        
+        <div style="margin-top:24px;display:flex;flex-direction:column;gap:8px;max-width:340px;">
+            <a href="{{ url_for('public.booking_page') }}" class="btn btn-primary" style="padding:9px 14px;">
+                <span>Book Appointment Online</span> <span style="margin-left:auto;">→</span>
+            </a>
+            <a href="{{ url_for('public.patient_portal') }}" class="btn btn-ghost" style="padding:8px 14px;">
+                <span>Patient Portal &amp; Queue Status</span> <span style="margin-left:auto;">→</span>
+            </a>
+        </div>
+
+        <div class="row wrap" style="margin-top:28px;gap:6px;">
+            <span class="pill">Role-Based Access</span>
+            <span class="pill green">Clinical Odontogram</span>
+            <span class="pill">Real-Time Queue</span>
+        </div>
+    </section>
+
+    <section class="auth-panel">
+        <div class="auth-card">
+            {% if current_user.is_authenticated %}
+            <div style="background:var(--blue-subtle);border:1px solid var(--blue-border);border-radius:var(--radius);padding:10px 12px;margin-bottom:16px;">
+                <div style="font-weight:600;color:var(--blue);font-size:13px;">Active Session Detected</div>
+                <div style="font-size:13px;color:var(--text-main);margin-top:2px;">
+                    Signed in as <b>{{ current_user.name }}</b> ({{ current_user.role|title }})
+                </div>
+                <div style="margin-top:8px;display:flex;gap:6px;">
+                    <a href="{{ url_for('dashboard.index') }}" class="btn btn-primary" style="padding:4px 10px;font-size:12px;">Go to Dashboard →</a>
+                    <a href="{{ url_for('auth.logout') }}" class="btn btn-ghost" style="padding:4px 10px;font-size:12px;">Sign Out</a>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Auth Mode Toggle Tabs: Sign In / Create Account -->
+            <div class="auth-tabs" role="tablist" style="display:flex;background:var(--bg-subtle);border:1px solid var(--border);border-radius:var(--radius);padding:2px;margin-bottom:16px;gap:2px;">
+                <button type="button" id="tab-btn-signin" class="auth-tab-btn active" role="tab" style="flex:1;border:none;background:#fff;padding:6px 10px;border-radius:4px;font-weight:600;font-size:13px;color:var(--text-main);cursor:pointer;box-shadow:var(--shadow);">Sign In</button>
+                <button type="button" id="tab-btn-signup" class="auth-tab-btn" role="tab" style="flex:1;border:none;background:transparent;padding:6px 10px;border-radius:4px;font-weight:500;font-size:13px;color:var(--text-muted);cursor:pointer;">Create Account</button>
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% for cat, msg in messages %}
+                    <div style="background:{% if cat == 'success' %}var(--green-bg){% elif cat == 'info' %}var(--blue-subtle){% else %}var(--red-bg){% endif %};border:1px solid {% if cat == 'success' %}var(--green-border){% elif cat == 'info' %}var(--blue-border){% else %}var(--red-border){% endif %};color:{% if cat == 'success' %}var(--green){% elif cat == 'info' %}var(--blue){% else %}var(--red){% endif %};border-radius:var(--radius);padding:8px 12px;font-size:12.5px;margin-bottom:12px;">
+                        {{ msg }}
+                    </div>
+                {% endfor %}
+            {% endwith %}
+
+            <!-- ================= 1. SIGN IN VIEW ================= -->
+            <div id="signin-section">
+                <h1>Sign in to DentiFlow</h1>
+                <p class="muted" style="margin-bottom:14px;">Select your role and enter your account credentials.</p>
+
+                <form method="POST" action="{{ url_for('auth.login') }}" id="signin-form">
+                    <div class="role-choice">
+                        <label>
+                            <input type="radio" name="role" value="doctor" {% if not request.args.get('role') or request.args.get('role') == 'doctor' %}checked{% endif %}>
+                            <span>Doctor</span>
+                        </label>
+                        <label>
+                            <input type="radio" name="role" value="patient" {% if request.args.get('role') == 'patient' %}checked{% endif %}>
+                            <span>Patient</span>
+                        </label>
+                        <label>
+                            <input type="radio" name="role" value="admin" {% if request.args.get('role') == 'admin' %}checked{% endif %}>
+                            <span>Admin</span>
+                        </label>
+                    </div>
+
+                    <div class="field">
+                        <label>Email address</label>
+                        <input type="email" name="email" id="signin-email" placeholder="doctor@gmail.com" value="{{ request.args.get('email', '') }}" required autofocus>
+                    </div>
+                    <div class="field" style="margin-top:10px">
+                        <label>Password</label>
+                        <input type="password" name="password" id="signin-password" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="signin-submit-btn" style="width:100%;margin-top:16px;padding:8px;">
+                        Sign In →
+                    </button>
+                </form>
+
+                <!-- One-click Demo Preset Fillers -->
+                <div style="margin-top:16px;border-top:1px solid var(--border);padding-top:12px;">
+                    <p class="muted" style="text-align:center;font-size:12px;margin:0 0 6px;">Demo quick-fill credentials:</p>
+                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;">
+                        <button type="button" class="btn btn-ghost" data-fill="doctor" style="padding:4px;font-size:12px;">Doctor</button>
+                        <button type="button" class="btn btn-ghost" data-fill="patient" style="padding:4px;font-size:12px;">Patient</button>
+                        <button type="button" class="btn btn-ghost" data-fill="admin" style="padding:4px;font-size:12px;">Admin</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= 2. CREATE ACCOUNT VIEW ================= -->
+            <div id="signup-section" style="display:none;">
+                <h1>Create your Account</h1>
+                <p class="muted" style="margin-bottom:14px;">Register a new patient or doctor account.</p>
+
+                <form method="POST" action="{{ url_for('auth.register') }}" id="signup-form">
+                    <div class="field">
+                        <label>Account type</label>
+                        <select name="role" id="signup-role">
+                            <option value="patient" selected>Patient (Appointments &amp; Records)</option>
+                            <option value="doctor">Doctor (Clinical Charting)</option>
+                        </select>
+                    </div>
+                    <div class="field" style="margin-top:10px">
+                        <label>Full name</label>
+                        <input type="text" name="name" id="signup-name" placeholder="Ashwini Goud" required>
+                    </div>
+                    <div class="field" style="margin-top:10px">
+                        <label>Email address</label>
+                        <input type="email" name="email" id="signup-email" placeholder="patient@gmail.com" required>
+                    </div>
+                    <div class="field" style="margin-top:10px">
+                        <label>Phone number</label>
+                        <input type="tel" name="phone" id="signup-phone" placeholder="+91 98765 43210">
+                    </div>
+                    <div class="field" style="margin-top:10px">
+                        <label>Password (minimum 6 characters)</label>
+                        <input type="password" name="password" id="signup-password" minlength="6" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%;margin-top:16px;padding:8px;">
+                        Create Account →
+                    </button>
+                </form>
+            </div>
+
+            <div style="margin-top:16px;padding-top:10px;border-top:1px solid var(--border);text-align:center;">
+                <p style="font-size:12.5px;margin:0;">
+                    Looking to book a visit? <a href="{{ url_for('public.booking_page') }}" style="font-weight:600;">Online Booking →</a>
+                </p>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const tabSignIn = document.getElementById('tab-btn-signin');
+    const tabSignUp = document.getElementById('tab-btn-signup');
+    const sectionSignIn = document.getElementById('signin-section');
+    const sectionSignUp = document.getElementById('signup-section');
+
+    function setTab(mode) {
+        const tabs = [
+            { btn: tabSignIn, sec: sectionSignIn, name: 'signin' },
+            { btn: tabSignUp, sec: sectionSignUp, name: 'signup' }
+        ];
+
+        tabs.forEach(t => {
+            if (t.name === mode) {
+                t.btn.classList.add('active');
+                t.btn.style.background = '#fff';
+                t.btn.style.color = 'var(--text-main)';
+                t.btn.style.boxShadow = 'var(--shadow)';
+                t.sec.style.display = 'block';
+            } else {
+                t.btn.classList.remove('active');
+                t.btn.style.background = 'transparent';
+                t.btn.style.color = 'var(--text-muted)';
+                t.btn.style.boxShadow = 'none';
+                t.sec.style.display = 'none';
+            }
+        });
+    }
+
+    if (tabSignIn) tabSignIn.addEventListener('click', () => setTab('signin'));
+    if (tabSignUp) tabSignUp.addEventListener('click', () => setTab('signup'));
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('mode') === 'signup') {
+        setTab('signup');
+    }
+
+    const credentials = {
+        doctor: { email: 'doctor@gmail.com', pass: 'doctor123', role: 'doctor' },
+        patient: { email: 'patient@gmail.com', pass: 'patient123', role: 'patient' },
+        admin: { email: 'admin@gmail.com', pass: 'admin123', role: 'admin' }
+    };
+
+    document.querySelectorAll('[data-fill]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const roleKey = btn.dataset.fill;
+            const cred = credentials[roleKey];
+            if (cred) {
+                setTab('signin');
+                const emailInp = document.getElementById('signin-email');
+                const passInp = document.getElementById('signin-password');
+                const radio = document.querySelector(`input[name="role"][value="${cred.role}"]`);
+                if (emailInp) emailInp.value = cred.email;
+                if (passInp) passInp.value = cred.pass;
+                if (radio) radio.checked = true;
+                
+                const submitBtn = document.getElementById('signin-submit-btn');
+                if (submitBtn) {
+                    submitBtn.focus();
+                }
+            }
+        });
+    });
+
+    const urlRole = params.get('role');
+    if (urlRole && credentials[urlRole]) {
+        const cred = credentials[urlRole];
+        const emailInp = document.getElementById('signin-email');
+        const passInp = document.getElementById('signin-password');
+        const radio = document.querySelector(`input[name="role"][value="${cred.role}"]`);
+        if (emailInp) emailInp.value = cred.email;
+        if (passInp) passInp.value = cred.pass;
+        if (radio) radio.checked = true;
+    }
+});
+</script>
+{% endblock %}
